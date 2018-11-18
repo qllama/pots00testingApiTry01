@@ -3,6 +3,10 @@ package com.function1;
 import java.util.*;
 import com.microsoft.azure.functions.annotation.*;
 import com.microsoft.azure.functions.*;
+import io.restassured.RestAssured.*;
+import io.restassured.matcher.RestAssuredMatchers.*;
+import org.hamcrest.Matchers.*;
+
 
 /**
  * Azure Functions with HTTP Trigger.
@@ -23,6 +27,17 @@ public class Function {
         // Parse query parameter
         String query = request.getQueryParameters().get("name");
         String name = request.getBody().orElse(query);
+
+        RestAssured.given()
+                .when()
+                .log().all()
+                .get("https://deckofcardsapi.com/api/deck/new/shuffle/")
+                .then()
+                .log().all()
+                .assertThat().statusCode(200)
+                .body("remaining", equalTo(52))
+                .body("success", equalTo(true))
+                .body("shuffled", equalTo(true));
 
         if (name == null) {
             return request.createResponseBuilder(HttpStatus.BAD_REQUEST).body("Please pass a name on the query string or in the request body").build();
