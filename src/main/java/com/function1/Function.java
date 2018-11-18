@@ -36,7 +36,7 @@ public class Function {
                 .log().all()
                 .assertThat().statusCode(200)
                 .body("remaining", equalTo(52))
-                .body("failure", equalTo(true))
+                .body("success", equalTo(true))
                 .body("shuffled", equalTo(true));
 
         if (name == null) {
